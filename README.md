@@ -337,11 +337,11 @@ erDiagram
     }
 
     DW_TRANSACTION_PRODUCTS {
-       int trxn_product_id PK,
-       int trxn_id FK,
-       int product_id FK,
-       string unit_price,
-       string line_total string
+       int trxn_product_id PK
+       int trxn_id FK
+       int product_id FK
+       string unit_price
+       string line_total
     }
     
     DW_MARKETPLACE ||--o{ DW_PRODUCT : contains
@@ -350,7 +350,7 @@ erDiagram
     DW_MARKETPLACE ||--o{ DW_TRANSACTIONS : records
     
     DW_PRODUCT ||--o{ DW_TRANSACTIONS : has
-    DW_CATEGORY ||--o{ DW_TRANSACTIONS : includes
+    DW_TRANSACTIONS ||--o{ DW_TRANSACTION_PRODUCTS : has
     DW_CUSTOMER ||--o{ DW_TRANSACTIONS : sells
     DW_CATEGORY ||--o{ DW_PRODUCT : categorizes
 ```
