@@ -670,6 +670,25 @@ The plug-and-play architecture enables:
    - Compare performance of different model types
    - Promote successful models to production with minimal disruption
 
+### Delta Processing and Model Training
+
+While the delta processor only processes new or changed data, the ML model training requires more context than just the delta. Here's how the system handles this:
+
+1. **Feature Store Integration**:
+   - The delta processor updates a feature store with new/changed features
+   - The feature store maintains the complete, up-to-date feature set
+   - This ensures we have a consistent view of all features for training
+
+2. **Training Approaches**:
+   - **Full Training**: The model is trained on the complete dataset from the feature store, not just the delta. This ensures the model learns from the entire dataset but is computationally expensive.
+   - **Windowed Training**: The model is trained on a sliding window of recent data (e.g., last 6 months). This balances between full retraining and incremental updates.
+   - **Incremental Training**: For algorithms that support it, the model is updated with just the new data without retraining from scratch.
+
+3. **MVP Approach**:
+   - For the initial implementation, we'll use the windowed training approach
+   - This provides a good balance between prediction quality and computational efficiency
+   - Training will occur after each significant data warehouse refresh
+
 ## Future Real-Time Prediction Extension
 
 As the system matures, we plan to extend it with real-time prediction capabilities. This section outlines the approach for this future enhancement.
