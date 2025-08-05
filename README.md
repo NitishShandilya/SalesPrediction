@@ -945,3 +945,64 @@ flowchart TD
   - Clear understanding of seller needs
   - Prioritized list of enhancements
   - Influence stakeholder decision
+
+## Agentic AI Integration
+
+To further enhance the e-commerce prediction system, we will integrate select agentic AI capabilities that provide the most value to sellers and system efficiency. These autonomous, goal-oriented AI agents will operate within well-defined boundaries to improve predictions and user experience.
+
+```mermaid
+flowchart TD
+    subgraph "Data Layer"
+        ADA[Adaptive Data Agents]
+        DW[Data Warehouse]
+        DW <--> ADA
+    end
+    
+    subgraph "ML Layer"
+        FOA[Feature Optimization Agents]
+        ML[ML Pipeline]
+        FOA <--> ML
+    end
+    
+    subgraph "User Experience Layer"
+        PIA[Personalized Insight Agents]
+        RA[Recommendation Agents]
+        API[API Layer]
+        UI[Dashboard UI]
+        API --> PIA
+        API --> RA
+        PIA --> UI
+        RA --> UI
+    end
+    
+    ADA --> ML
+    ML --> API
+```
+
+### Key Agentic AI Components
+
+1. **Personalized Insight Agents**:
+   - Tailor prediction insights to specific seller needs and behaviors
+   - Adapt presentation of predictions based on seller interaction patterns
+   - Vector DB index on top of document DB
+   - Highlight the most relevant predictions based on seller inventory and sales history
+   - Provide customized confidence levels and context based on seller sophistication
+
+2. **Recommendation Agents**:
+   - Transform predictions into actionable recommendations for sellers
+   - Suggest specific inventory, pricing, or marketing actions based on predictions
+   - Provide rationale for recommendations with supporting data
+   - Learn from seller acceptance/rejection of recommendations to improve future suggestions
+   
+3. **Adaptive Data Agents**:
+   - Autonomously monitor Data Warehouse refresh cycles
+   - Intelligently determine which data needs extraction based on relevance to predictions
+   - Prioritize data processing for high-impact categories and marketplaces
+   - Adapt extraction patterns based on observed prediction accuracy improvements
+
+4. **Feature Optimization Agents**:
+   - Continuously evaluate feature importance across different marketplaces and categories
+   - Automatically refine feature sets based on performance feedback
+   - Identify marketplace-specific feature patterns that improve prediction accuracy
+   - Suggest new feature combinations to the data science team
+
