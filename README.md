@@ -847,6 +847,52 @@ flowchart TD
    - Resource utilization (CPU, memory, disk)
    - Queue backlogs for async jobs
 
+## Traffic Mirrored Preproduction Environment
+
+To enable continuous learning and experimentation without disrupting the main production pipeline, we will establish a traffic mirrored preproduction environment. This environment will allow the data science team to test different ML models and approaches using real production data patterns.
+
+```mermaid
+flowchart TD
+    subgraph "Production Environment"
+        DW[Data Warehouse] --> ML[ML Pipeline]
+        ML --> API[API Layer]
+    end
+    
+    subgraph "Traffic Mirror"
+        TM[Traffic Mirror Service]
+    end
+    
+    subgraph "Experimental Platform"
+        DWV[Data Warehouse View] --> DS[Data Science Tools]
+        DS --> CM[Comparison Metrics]
+    end
+    
+    API --> TM
+    TM --> DS
+    DW --> DWV
+    CM --> DS
+```
+
+### Key Components
+
+1. **Traffic Mirror Service**:
+   - Captures a configurable percentage of production API requests
+   - Forwards these requests to the experimental prediction service
+   - Does not affect the production response time or reliability
+   - Can be configured to mirror specific marketplaces or user segments
+
+2. **Data Warehouse View**:
+   - Read-only view of the production data warehouse
+   - No impact on production data processing
+   - Provides the same data structure and content as production
+
+3. **Data Science Workbench**:
+   - Jupyter notebooks and other data science tools
+   - Environment for developing and testing new models
+   - Access to historical prediction data and actual sales outcomes
+   - Support for various ML frameworks and libraries
+
+
 ## Phased Implementation
 
 ### Phase 1: MVP with Basic Pipeline
