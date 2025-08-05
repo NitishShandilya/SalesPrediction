@@ -882,7 +882,7 @@ flowchart TD
    - Can be configured to mirror specific marketplaces or user segments
 
 2. **Data Warehouse View**:
-   - Read-only view of the production data warehouse
+   - Pre-production data warehouse of limited capacity
    - No impact on production data processing
    - Provides the same data structure and content as production
 
