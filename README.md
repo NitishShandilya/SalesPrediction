@@ -13,13 +13,13 @@ A comprehensive design document for a scalable system that predicts top-selling 
 5. [Data Architecture](#data-architecture)
 6. [API Design](#api-design)
 7. [ML Pipeline](#ml-pipeline)
-8. [Error Handling & Recovery](#error-handling--recovery)
-9. [Challenges & Solutions](#challenges--solutions)
+8. [Challenges & Solutions](#challenges--solutions)
    - [Batch Processing Challenges](#batch-processing-challenges)
    - [Prediction Accuracy Challenges](#prediction-accuracy-challenges)
    - [Consistency & Availability Challenges](#consistency--availability-challenges)
-10. [Monitoring & Alerting](#monitoring--alerting)
-11. [Phased Implementation](#phased-implementation)
+9. [Monitoring & Alerting](#monitoring--alerting)
+10. [Phased Implementation](#phased-implementation)
+11. Agentic AI Integration
 
 ## Problem Statement
 
@@ -32,29 +32,30 @@ We need to develop a feature that can analyze historical transaction data and pr
 ### Functional Requirements
 
 1. **User Scale**: Support 1 million Daily Active Users (DAU) across all marketplaces
-2. **Data Source**: 
+2. **Parameters to consider**: For now focusing on historical transactions as a parameter with a scope to introduce other parameters
+3. **Data Source**: 
    - Utilize existing Data Warehouse with 8-hour refresh cycle
    - Initially focus on batch processing of historical transactions
    - Future extension to real-time predictions
-3. **Marketplace Support**: 
+4. **Marketplace Support**: 
    - Support 10 global marketplaces (US, UK, DE, FR, AUS, etc.)
    - Phased rollout based on marketplace traffic
-4. **Category Support**: 
+5. **Category Support**: 
    - Handle marketplace-specific categories (100 categories per marketplace)
    - System should be agnostic of category tree changes and new category additions
    - Pagination support (top 5 categories initially)
-5. **Time Frame Support**: 
+6. **Time Frame Support**: 
    - Week, month, and year initially
    - Scalable architecture for future time frames (quarter, half-yearly, etc.)
-6. **Data Processing**:
+7. **Data Processing**:
    - Leverage existing Data Warehouse infrastructure
    - Process data for ML model consumption
    - Extensible for Change Data Capture for real-time predictions in the future
-7. **Prediction Capabilities**:
+8. **Prediction Capabilities**:
    - Forecast top-selling products by category per marketplace
    - Provide confidence scores for predictions (May or may not be displayed on the front-end based on Product feedback)
    - Support different time frames for predictions
-8. **Model Management**:
+9. **Model Management**:
    - Initial MVP with logistic regression - simple ML model
    - Support for plug-and-play of different ML models
    - Minimal impact when switching models
@@ -786,12 +787,11 @@ flowchart TD
    - **Solution**: Use different consistency models for different components:
      - Strong consistency for transaction processing
      - Eventual consistency for prediction results
-     - Read-after-write consistency for user interactions
 
 2. **Data Replication**:
    - **Challenge**: Maintaining consistency across replicated data stores
-   - **Solution**: Implement tiered replication strategy with synchronous replication for critical data and asynchronous replication for analytics
-
+   - **Solution**: Implement tiered asynchronous replication strategy
+     
 3. **Partial Failures**:
    - **Challenge**: Handling partial system failures without affecting user experience
    - **Solution**: Implement circuit breakers, fallback mechanisms, and graceful degradation
@@ -965,14 +965,11 @@ flowchart TD
     end
     
     subgraph "User Experience Layer"
-        PIA[Personalized Insight Agents]
-        RA[Recommendation Agents]
+        PIA[Personalized Recommendation Agents]
         API[API Layer]
         UI[Dashboard UI]
         API --> PIA
-        API --> RA
         PIA --> UI
-        RA --> UI
     end
     
     ADA --> ML
@@ -980,27 +977,106 @@ flowchart TD
 ```
 
 ### Key Agentic AI Components
-
-1. **Personalized Insight Agents**:
-   - Tailor prediction insights to specific seller needs and behaviors
-   - Adapt presentation of predictions based on seller interaction patterns
-   - Vector DB index on top of document DB
-   - Highlight the most relevant predictions based on seller inventory and sales history
-   - Provide customized confidence levels and context based on seller sophistication
-
-2. **Recommendation Agents**:
+1. **Personalized Recommendation Agents**:
+   - Tailor sales prediction insights to specific seller needs and behaviors
    - Transform predictions into actionable recommendations for sellers
-   - Suggest specific inventory, pricing, or marketing actions based on predictions
-   - Provide rationale for recommendations with supporting data
-   - Learn from seller acceptance/rejection of recommendations to improve future suggestions
+   - Category based prompt curation by considering attributes related to categories
+   - Adapt presentation of predictions based on seller growth patterns
    
-3. **Adaptive Data Agents**:
+   **GenAI/LLM Enhancement**:
+   ```mermaid
+   flowchart TD
+       subgraph "Personalized Insight Agent Architecture"
+           OA[Orchestrator Agent] --> CSA[Category-Specific Agent]
+           OA --> SGA[Seller Growth Agent]
+           OA --> SA[Seasonality Agent]
+           CSA --> RG[Response Generator]
+           SGA --> RG
+           SA --> RG
+           RG --> UI[Dashboard UI]
+       end
+       
+       subgraph "Data Sources"
+           DS1[Prediction Data] --> OA
+           DS2[Seller History] --> OA
+           DS3[Market Trends] --> OA
+           DS4[Seasonal Data] --> OA
+           DS5[Regional Data] --> OA
+       end
+   ```
+   
+   - **LangChain Integration**: Implement specialized sub-agents:
+     - **Category-Specific Agent**: Generates contextually relevant prompts based on product category
+     - **Seller Growth Agent**: Tailors insights based on seller's growth
+     - **Seasonality Agent**: Specializes in temporal patterns, seasonal trends, and time-sensitive recommendations
+   
+   - **Context-Aware Capabilities**:
+     - Dynamic prompt generation incorporating real-time market data
+     - Natural language insights explaining the "why" behind predictions
+     - Adaptive communication style based on seller interaction patterns
+     - Multi-modal understanding incorporating product imagery
+   
+   - **Example Prompt for Snacks Category (Dietician Persona)**:
+   ```
+   You are an expert dietician specializing in consumer snack trends.
+   Your task is to analyze and rank predicted top-selling snack products for
+   {SELLER_NAME} in {REGION} during {SEASON} {YEAR}.
+   
+   CONTEXT:
+   - Current season: {SEASON} in {REGION}
+   - Seller's historical performance: {PERFORMANCE_SUMMARY}
+   - Seller's growth stage: {GROWTH_STAGE}
+   
+   CONSTRAINTS:
+   - Only recommend snacks appropriate for {SEASON} in {REGION}
+   - Consider price points that have historically performed well for this seller
+   - Focus on items with potential for {GROWTH_PERCENTAGE}% growth based on market trends
+   
+   INSTRUCTIONS:
+   1. Analyze the predicted top-selling snack products
+   2. Rank them based on:
+      - Predicted sales volume
+      - Seasonal appropriateness
+      - Growth potential for this specific seller
+   3. For each product, provide:
+      - Rationale for its ranking
+      - Specific selling points relevant to {SEASON} and {REGION}
+   
+   OUTPUT FORMAT:
+   Provide a JSON-formatted list with the following structure for each product:
+   {
+     "products": [
+       {
+         "product_name": "Product Name",
+         "predicted_sales_percentage": XX.X,
+         "average_item_price": $XX.XX,
+         "recommended_price_point": "$XX.XX - $XX.XX",
+         "seasonal_relevance_score": X.X/10,
+         "growth_potential": "XX%",
+         "inventory_recommendation": "X units",
+         "selling_points": [
+           "Point 1 specific to {SEASON} in {REGION}",
+           "Point 2 related to current superfood trends",
+           "Point 3 based on seller's historical performance"
+         ],
+         "rationale": "Concise explanation tailored to dietician perspective"
+       }
+     ],
+     "market_insights": {
+       "seasonal_trends": ["Trend 1", "Trend 2"],
+       "regional_preferences": ["Preference 1", "Preference 2"],
+       "emerging_opportunities": ["Opportunity 1", "Opportunity 2"]
+     }
+   }
+   ```
+   
+2. **Adaptive Data Agents**:
    - Autonomously monitor Data Warehouse refresh cycles
    - Intelligently determine which data needs extraction based on relevance to predictions
    - Prioritize data processing for high-impact categories and marketplaces
    - Adapt extraction patterns based on observed prediction accuracy improvements
 
-4. **Feature Optimization Agents**:
+3. **Feature Optimization Agents**:
    - Continuously evaluate feature importance across different marketplaces and categories
    - Automatically refine feature sets based on performance feedback
    - Identify marketplace-specific feature patterns that improve prediction accuracy
