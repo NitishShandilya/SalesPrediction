@@ -983,7 +983,6 @@ flowchart TD
    - Category based prompt curation by considering attributes related to categories
    - Adapt presentation of predictions based on seller growth patterns
    
-   **GenAI/LLM Enhancement**:
    ```mermaid
    flowchart TD
        subgraph "Personalized Insight Agent Architecture"
@@ -1014,7 +1013,7 @@ flowchart TD
      - Dynamic prompt generation incorporating real-time market data
      - Natural language insights explaining the "why" behind predictions
      - Adaptive communication style based on seller interaction patterns
-     - Multi-modal understanding incorporating product imagery
+     - Multi-modal understanding
    
    - **Example Prompt for Snacks Category (Dietician Persona)**:
    ```
@@ -1041,32 +1040,37 @@ flowchart TD
    3. For each product, provide:
       - Rationale for its ranking
       - Specific selling points relevant to {SEASON} and {REGION}
+
+   INPUT:
+      Seller ID: 1429
+      Category: Snacks
+      Region: California
+      Season: Fall
+
    
    OUTPUT FORMAT:
    Provide a JSON-formatted list with the following structure for each product:
    {
-     "products": [
+      "products": [
        {
-         "product_name": "Product Name",
-         "predicted_sales_percentage": XX.X,
-         "average_item_price": $XX.XX,
-         "recommended_price_point": "$XX.XX - $XX.XX",
-         "seasonal_relevance_score": X.X/10,
-         "growth_potential": "XX%",
-         "inventory_recommendation": "X units",
+         "product_name": "Pumpkin Protein Bars",
+         "predicted_sales_pct": 17.4,
+         "recommended_price_range": "$2.49 - $2.79",
+         "growth_potential": "22%",
+         "inventory_recommendation": "Stock 500 units",
+         "rationale": "High alignment with Fall flavors, trending superfoods, good historical sales",
          "selling_points": [
-           "Point 1 specific to {SEASON} in {REGION}",
-           "Point 2 related to current superfood trends",
-           "Point 3 based on seller's historical performance"
-         ],
-         "rationale": "Concise explanation tailored to dietician perspective"
+           "Fall-themed flavor for California fitness trend",
+           "Chia-based protein aligns with current superfood wave",
+           "Performs well in this seller's price range"
+         ]
        }
      ],
      "market_insights": {
-       "seasonal_trends": ["Trend 1", "Trend 2"],
-       "regional_preferences": ["Preference 1", "Preference 2"],
-       "emerging_opportunities": ["Opportunity 1", "Opportunity 2"]
-     }
+       "seasonal_trends": ["Pumpkin", "Chia", "Spicy"],
+       "regional_preferences": ["Health-focused", "Plant-based"],
+       "emerging_opportunities": ["Prebiotic snacks", "Zero sugar"]
+        }
    }
    ```
    
