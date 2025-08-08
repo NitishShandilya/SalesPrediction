@@ -1,4 +1,4 @@
-# E-commerce Product Prediction System Design
+# E-commerce Top Sales Prediction System Design
 
 A comprehensive design document for a scalable system that predicts top-selling products by category over different time frames across multiple marketplaces.
 
