@@ -64,7 +64,7 @@ We need to develop a feature that can analyze historical transaction data and pr
 ### Non-Functional Requirements
 
 1. **Performance**:
-   - API response time or P95 under 100ms
+   - API response time or P95 under 50ms
    - Efficient handling of 1M DAU across marketplaces utilizing cache
 2. **Scalability**:
    - Support for increasing data volume and user base. Horizontal scaling for all underlying services
@@ -342,7 +342,7 @@ erDiagram
        int trxn_id FK
        int product_id FK
        string unit_price
-       string line_total
+       decimal line_total
     }
     
     DW_MARKETPLACE ||--o{ DW_PRODUCT : contains
@@ -356,7 +356,7 @@ erDiagram
     DW_CATEGORY ||--o{ DW_PRODUCT : categorizes
 ```
 
-### Time-Based Data Storage
+### Data Storage
 
 The existing Data Warehouse is already set up with the following characteristics:
 
@@ -582,14 +582,13 @@ flowchart TD
    - Marketplace-specific features
    - Time-based features (day of week, month, seasonality)
    - Product features (price, category, attributes)
-   - Historical sales patterns (velocity, acceleration)
+   - Historical sales patterns
    - Category-level aggregations
 
 2. **Model Training**:
    - MVP approach: Logistic regression for simplicity and interpretability
    - Separate models for each marketplace
    - Separate models for different time frames
-   - Idempotent training with retry capability
 
 3. **Model Registry**:
    - Versioned model storage
@@ -599,7 +598,6 @@ flowchart TD
 
 4. **Prediction Service**:
    - Scheduled prediction generation after DW refresh
-   - Idempotent prediction generation with retry capability
    - Confidence score calculation
    - Marketplace-specific prediction storage
 
@@ -906,7 +904,7 @@ flowchart TD
   - Basic monitoring
 - **Success Criteria**:
   - Prediction accuracy within 25% of actual sales
-  - API response time under 100ms for 95% of requests
+  - API response time under 50ms for 95% of requests
   - 99.999% system availability
 
 ### Phase 2: Marketplace Expansion
