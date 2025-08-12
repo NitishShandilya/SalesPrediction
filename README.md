@@ -304,7 +304,7 @@ erDiagram
         string description
         string current_price
         int category_id FK
-        int seller_id FK
+        int customer_id FK
         timestamp created_at
         timestamp updated_at
     }
@@ -342,6 +342,7 @@ erDiagram
        int trxn_id FK
        int product_id FK
        string unit_price
+       int quantity
        decimal line_total
     }
     
